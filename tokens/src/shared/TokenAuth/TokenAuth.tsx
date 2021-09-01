@@ -40,61 +40,45 @@ export function TokenAuth() {
   }
 
   interface ITokenData {
-    token: string;
+    refreshDurationMs: number;
     refreshToken: string;
-    refreshDurationMs: string;
+    token: string;
+    tokenDurationMs: number;
   }
 
-  let tokenRefreshCounter: NodeJS.Timer;
-  let refreshTokenCurrentState : number;
-
-  function saveTokenToLocal (token: ITokenData) {
-    localStorage.setItem('token', token.token);
-    localStorage.setItem('refresh', token.refreshToken);
-    localStorage.setItem('refreshDurationMs', token.refreshDurationMs);
+  function saveTokenToLocalStorage (tokenDataFromServer: ITokenData) {
+    localStorage.setItem('token', tokenDataFromServer.token);
+    localStorage.setItem('refreshToken', tokenDataFromServer.refreshToken);
+    localStorage.setItem('tokenDurationMs', JSON.stringify(tokenDataFromServer.tokenDurationMs));
+    localStorage.setItem('refreshDurationMs', JSON.stringify(tokenDataFromServer.refreshDurationMs));
+    localStorage.setItem('tokenEnd', JSON.stringify(new Date().getTime() + 10000));
   }
 
-  function countTokenRefreshState () {
-    tokenRefreshCounter = setInterval( async () => {
-      refreshTokenCurrentState = Number(localStorage.getItem('refreshDurationMs'));
-      if (refreshTokenCurrentState > 0) {
-        refreshTokenCurrentState -= 1000;
-        localStorage.setItem('refreshDurationMs', JSON.stringify(refreshTokenCurrentState));
-      }
-      else if (refreshTokenCurrentState <= 1000 && refreshTokenCurrentState != null) {
-        clearInterval(tokenRefreshCounter);
-        refreshTokenCurrentState = 0;
-        let token = localStorage.getItem('refresh');
-        let newTokendata = await refreshToken(token);
-        console.log(newTokendata);
-        saveTokenToLocal(newTokendata);
-        console.log('Authentification completed');
-        countTokenRefreshState();
-      }
-      else {
-        return;
-      }
-    }, 1000);
-  }
-
-  async function autoTokenReload () {
-    let localToken = localStorage.getItem('token');
-    if (localToken !== null) {
-      console.log('We have token');
-      countTokenRefreshState();
-    }
+  async function autoTokenReload (){
+    let token = localStorage.getItem('token');
+    let tokenAvailableUntilMs = Number(localStorage.getItem('tokenEnd'));
+    let startEndDiff = new Date().getTime() - tokenAvailableUntilMs;
+    if (token != null) {
+      console.log(`Token is available for ${Math.abs(startEndDiff)}`);
+      setTimeout(async () => {
+        let refreshTokenFromStorage = localStorage.getItem('refreshToken');
+        let newToken = await refreshToken(refreshTokenFromStorage);
+        saveTokenToLocalStorage(newToken);
+        console.log('Token reloaded');
+        startEndDiff = new Date().getTime() - tokenAvailableUntilMs;
+        autoTokenReload();
+      }, Math.abs(startEndDiff));
+    } 
     else {
-      console.log('Authentification is in progress');
+      console.log('First time token initiation');
       await requestToken();
-      let tokenData = await getToken();
-      console.log(tokenData);
-      saveTokenToLocal(tokenData);
-      console.log('Authentification completed');
-      countTokenRefreshState();
+      let token = await getToken();
+      saveTokenToLocalStorage(token);
+      autoTokenReload();
     }
   }
-  
-  autoTokenReload ();
+
+  autoTokenReload();
 
   return (
     <div></div>
