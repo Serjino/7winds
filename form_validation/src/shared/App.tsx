@@ -2,6 +2,7 @@ import React from "react";
 import "./main.global.css";
 import { hot } from "react-hot-loader/root";
 import styles from "./app.css";
+import { useState } from 'react'
 
 interface IValidityRules {
     [key: string]: {
@@ -34,7 +35,7 @@ const validityRules: IValidityRules = {
     },
 }
 
-function submitForm(e: React.FormEvent<HTMLFormElement>) {
+function checkValidityAndSubmit(e: React.FormEvent<HTMLFormElement>) {
 
     let form = (e.target as HTMLFormElement);
     let notices = form.getElementsByTagName('span');
@@ -65,71 +66,118 @@ function submitForm(e: React.FormEvent<HTMLFormElement>) {
     }
 }
 
-function checkInputValidity(e: React.ChangeEvent<HTMLInputElement>) {
+function checkInputValidity(e: React.ChangeEvent<HTMLInputElement>) : string {
     let input = e.target;
     let inputName: string = input.name;
     let label = input.closest('label');
-    console.log(inputName);
-    if (inputName === "checkbox" && !input.checked) {
-        if(label != null) {
-            label.getElementsByTagName('span')[0].textContent = `${validityRules[inputName].notice}`;
+    let notice = label?.getElementsByTagName('span')[0];
+    if (notice != undefined) {
+        if (inputName === "checkbox" && !input.checked) {
+            return `${validityRules[inputName].notice}`;
         }
-        return;
-    }
-    if (inputName === "checkbox" && input.checked) {
-        if(label != null) {
-            label.getElementsByTagName('span')[0].textContent = ``;
+        if (inputName === "checkbox" && input.checked) {
+            return '';
         }
-        return;
-    }
-    else if (input.value.match(validityRules[inputName].regexp) != null) {
-        console.log('Correct');
-        if (label != null) {
-            label.getElementsByTagName('span')[0].textContent = ``;
+        else if (input.value.match(validityRules[inputName].regexp) != null) {
+            return '';
+
+        }
+        else {
+            return `${validityRules[inputName].notice}`;
         }
     }
-    else {
-        console.log('Wrong');
-        if (label != null) {
-            label.getElementsByTagName('span')[0].textContent = `${validityRules[inputName].notice}`;
-        }
-    }
+    return '';
 }
 
-function AppComponent(this: any) {
+interface IProps {
+    [key:string]:string;
+}
+
+
+function InputComponent (props : IProps) {
+
+    const [validNotice, setState] = useState("");
+
     return (
-        <form className={styles.form} action="https://jsonplaceholder.typicode.com/posts" method="POST" onSubmit={(e) => submitForm(e)}>
-            <fieldset>
-                <legend>Введите Ваши данные</legend>
-                <label className={styles.label}>Имя
-                    <input className={styles.input} name="name" type="text" onChange={(e) => { checkInputValidity(e) }} autoComplete="off">
-                    </input>
-                    <span className={styles.validityNotice}></span>
-                </label>
-                <label className={styles.label}>Email
-                    <input className={styles.input} name="email" type="email" onChange={(e) => { checkInputValidity(e) }} autoComplete="off">
-                    </input>
-                    <span className={styles.validityNotice}></span>
-                </label>
-                <label className={styles.label}>Телефон
-                    <input className={styles.input} name="tel" type="tel" onChange={(e) => { checkInputValidity(e) }} autoComplete="off">
-                    </input>
-                    <span className={styles.validityNotice}></span>
-                </label>
-                <label className={styles.label}>Дата
-                    <input className={styles.input} name="date" type="date" onChange={(e) => { checkInputValidity(e) }} autoComplete="off">
-                    </input>
-                    <span className={styles.validityNotice}></span>
-                </label>
-                <label className={[styles.label, styles.labelCheckbox].join(' ')}><p className={styles.agrText}>Я согласен на обработку персональных данных</p>
-                    <input className={[styles.input, styles.inputCheckbox].join(' ')} name="checkbox" type="checkbox" onChange={(e) => { checkInputValidity(e) }}>
-                    </input>
-                    <span className={[styles.validityNotice, styles.validityNoticeCkeckbox].join(' ')}></span>
-                </label>
-                <input className={styles.submitBtn} type="submit" value="Отправить"></input>
-            </fieldset>
-        </form>
+        <label className={styles[props.labelClass]}>{props.labelText}
+            <input className={styles[props.inputClass]} name={props.name} type={props.type} onChange={(e) => { setState(checkInputValidity(e)) }} autoComplete="off">
+            </input>
+            <span className={styles[props.validityNoticeClass]}>{validNotice}</span>
+        </label>
     );
 }
 
-export const App = hot(AppComponent);
+function CheckboxComponent (props : IProps) {
+
+    const [validNotice, setState] = useState("");
+
+    return (
+        <label className={[styles[props.labelClass], styles[props.labelCheckBoxClass]].join(' ')}><p className={styles[props.CheckboxTextClass]}>{props.checkboxText}</p>
+        <input className={styles[props.input]} name={props.name} type={props.type} onChange={(e) => { setState(checkInputValidity(e)) }}>
+        </input>
+        <span className={styles[props.validityNoticeClass]}>{validNotice}</span>
+    </label>
+    );
+}
+
+    function AppComponent(this: any) {
+        return (
+            <form className={styles.form} action="https://jsonplaceholder.typicode.com/posts" method="POST" onSubmit={(e) => checkValidityAndSubmit(e)}>
+                <fieldset>
+                    <legend>Введите Ваши данные</legend>
+
+                    <InputComponent 
+                        labelClass="label"
+                        inputClass="input"
+                        validityNoticeClass="validityNotice"
+                        type="text"
+                        name="name"
+                        labelText="Имя"
+                    />
+
+                    <InputComponent 
+                        labelClass="label"
+                        inputClass="input"
+                        validityNoticeClass="validityNotice"
+                        type="email"
+                        name="email"
+                        labelText="Email"
+                    />
+
+                    <InputComponent
+                        labelClass="label"
+                        inputClass="input"
+                        validityNoticeClass="validityNotice"
+                        type="tel"
+                        name="tel"
+                        labelText="Телефон"
+                    />
+
+                    <InputComponent
+                        labelClass="label"
+                        inputClass="input"
+                        validityNoticeClass="validityNotice"
+                        type="date"
+                        name="date"
+                        labelText="Дата"
+                    />
+
+                    <CheckboxComponent
+                        labelClass="label"
+                        labelCheckBoxClass="labelCheckbox"
+                        CheckboxTextClass="agrText"
+                        checkboxText="Я согласен на обработку персональных данных"
+                        inputClass="input"
+                        validityNoticeClass="validityNotice"
+                        type="checkbox"
+                        name="checkbox"
+                    />
+
+                    <input className={styles.submitBtn} type="submit" value="Отправить"></input>
+                </fieldset>
+            </form>
+        );
+    }
+    
+
+    export const App = hot(AppComponent);
