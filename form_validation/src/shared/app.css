@@ -1,0 +1,40 @@
+.form {
+    max-width: 320px;
+    margin: 0 auto;
+}
+
+.validityNotice {
+    position: absolute;
+    bottom: -15px;
+    font-size: 10px;
+    color: red;
+    display: flex;
+}
+
+.label {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.labelCheckbox {
+    flex-direction: row;  
+}
+
+.input {
+    margin-top: 8px;
+}
+
+.agrText {
+    order: 1;
+    margin: 0;
+    margin-left: 10px;
+    max-width: 200px;
+    text-align: left;
+}
+
+.submitBtn {
+    display: flex;
+    margin: 0 auto;
+}
