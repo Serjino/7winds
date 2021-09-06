@@ -71,6 +71,7 @@ function checkInputValidity(e: React.ChangeEvent<HTMLInputElement>) : string {
     let inputName: string = input.name;
     let label = input.closest('label');
     let notice = label?.getElementsByTagName('span')[0];
+
     if (notice != undefined) {
         if (inputName === "checkbox" && !input.checked) {
             return `${validityRules[inputName].notice}`;
@@ -96,11 +97,12 @@ interface IProps {
 
 function InputComponent (props : IProps) {
 
-    const [validNotice, setState] = useState("");
+    const [validNotice, setValidNotice] = useState("");
+    
 
     return (
         <label className={styles[props.labelClass]}>{props.labelText}
-            <input className={styles[props.inputClass]} name={props.name} type={props.type} onChange={(e) => { setState(checkInputValidity(e)) }} autoComplete="off">
+            <input className={styles[props.inputClass]} name={props.name} type={props.type} onChange={(e) => { setValidNotice(checkInputValidity(e)) }} autoComplete="off">
             </input>
             <span className={styles[props.validityNoticeClass]}>{validNotice}</span>
         </label>
@@ -109,11 +111,11 @@ function InputComponent (props : IProps) {
 
 function CheckboxComponent (props : IProps) {
 
-    const [validNotice, setState] = useState("");
+    const [validNotice, setValidNotice] = useState("");
 
     return (
         <label className={[styles[props.labelClass], styles[props.labelCheckBoxClass]].join(' ')}><p className={styles[props.CheckboxTextClass]}>{props.checkboxText}</p>
-        <input className={styles[props.input]} name={props.name} type={props.type} onChange={(e) => { setState(checkInputValidity(e)) }}>
+        <input className={styles[props.input]} name={props.name} type={props.type} onChange={(e) => { setValidNotice(checkInputValidity(e)) }}>
         </input>
         <span className={styles[props.validityNoticeClass]}>{validNotice}</span>
     </label>
