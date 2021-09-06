@@ -29,7 +29,7 @@ module.exports = {
         // 'webpack-hot-middleware/client?path=http://localhost:3001/static/__webpack_hmr',
     ],
     output: {
-        path: path.resolve(__dirname, '../../docs'),
+        path: path.resolve(__dirname, '../docs'),
         filename: 'index.js',
         // publicPath: '/static/'
     },
