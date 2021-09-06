@@ -7,7 +7,8 @@
     "build:dev": "cross-env NODE_ENV=development webpack",
     "build:prod": "cross-env NODE_ENV=production webpack",
     "dev": "cross-env NODE_ENV=development node ./bin/dev.js",
-    "test": "jest"
+    "test": "jest",
+    "gitPages": "cross-env NODE_ENV=development webpack ./cfg/webpack.client.config"
   },
   "repository": {
     "type": "git",
