@@ -1,6 +1,6 @@
 import React from "react";
 import "./main.global.css";
-import { hot } from "react-hot-loader/root";
+// import { hot } from "react-hot-loader/root";
 import styles from "./app.css";
 import { useState } from 'react'
 
@@ -122,7 +122,7 @@ function CheckboxComponent (props : IProps) {
     );
 }
 
-    function AppComponent(this: any) {
+    export function AppComponent(this: any) {
         return (
             <form className={styles.form} action="https://jsonplaceholder.typicode.com/posts" method="POST" onSubmit={(e) => checkValidityAndSubmit(e)}>
                 <fieldset>
@@ -182,4 +182,4 @@ function CheckboxComponent (props : IProps) {
     }
     
 
-    export const App = hot(AppComponent);
+    // export const App = hot(AppComponent);
