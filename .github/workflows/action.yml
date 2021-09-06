@@ -12,3 +12,7 @@ jobs:
           node-version: '14'
       - run: npm install
       - run: npm run gitPages
+      - run: git push
+      - run: git add .
+      - run: git commit -m 'New bundle creation'
+      - run: git push
