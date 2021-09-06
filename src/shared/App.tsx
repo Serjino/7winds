@@ -134,7 +134,7 @@ function CheckboxComponent (props : IProps) {
                         validityNoticeClass="validityNotice"
                         type="text"
                         name="name"
-                        labelText="Гена"
+                        labelText="SERGEY"
                     />
 
                     <InputComponent 
