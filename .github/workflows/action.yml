@@ -12,6 +12,8 @@ jobs:
           node-version: '14'
       - run: npm install
       - run: npm run gitPages
+      - run: git config --global user.email "serjino777@yandex.ru"
+      - run: git config --global user.name "Serjino"
       - run: git add .
       - run: git commit -m 'New bundle builded'
-      - run: git push https://Serjino:23no08vo@github.com/Serjino/7winds.git web
+      - run: git push
