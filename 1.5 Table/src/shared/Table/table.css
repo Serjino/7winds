@@ -1,0 +1,24 @@
+.table {
+    padding: 50px;
+    border-collapse: collapse;
+    width: 100%;
+   
+}
+
+/* .table tbody {
+    
+} */
+
+.table td {
+    padding: 5px;
+    /* border: 1px solid black; */
+}
+/* 
+.descriptionCell {
+    display: block;
+} */
+
+
+.span {
+    width: fit-content;
+}
